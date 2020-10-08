@@ -6,6 +6,9 @@ const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const expressValidator = require("express-validator");
 require("dotenv").config();
+const swaggerJsDoc = require("swagger-jsdoc");
+const swaggerUi = require("swagger-ui-express");
+
 // import routes
 const authRoutes = require("./routes/auth");
 const userRoutes = require("./routes/user");
@@ -31,6 +34,29 @@ app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(expressValidator());
 app.use(cors());
+
+// Extended: https://swagger.io/specification/#infoObject
+const swaggerOptions = {
+    swaggerDefinition: {
+      openapi: '3.0.0',
+      info: {
+        version: "1.0.0",
+        title: "Ecommerce API",
+        description: "Ecommerce API Information",
+        contact: {
+          name: "miguel_dev"
+        },
+        servers: ["http://localhost:8000"]
+      },
+      
+    },
+    // 
+    apis: ['./routes/*.js']
+  };
+
+const swaggerDocs = swaggerJsDoc(swaggerOptions);
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+  
 
 // routes middleware
 app.use("/api", authRoutes);
